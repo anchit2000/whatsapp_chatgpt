@@ -35,10 +35,12 @@ def return_chat_gpt_response(text: str = None) -> str:
 
 def return_stable_diffusion_response(text: str = None) -> str:
     response_image_data = openai_image_gen(text)
-       
+    print('[INFO]: Image Generated.')
     content = requests.get(
         response_image_data
     ).content
+    if 'data' not in os.listdir(os.getcwd()):
+        os.mkdir(os.path.join(os.getcwd(), 'data'))
     file_path = os.path.abspath(f"./data/{uuid.uuid4().__str__()}.jpeg")
     with open(file_path, "wb") as file:
         file.write(content)
@@ -88,7 +90,7 @@ while True:
                     message = message.split("!chatgpt-image ")[1]
 
                     response = return_chat_gpt_response(message)
-                    image_path = return_stable_diffusion_response(response)
+                    image_path = return_stable_diffusion_response(message) #Changed to message since response in development
 
                     attachment_box = driver.find_element(
                         By.XPATH, '//div[@title = "Attach"]'
@@ -118,7 +120,13 @@ while True:
                     input_box.send_keys(Keys.ESCAPE)
 
                 else:
-                    pass
+                    time.sleep(4)
+
+                    input_box = driver.find_element(
+                        By.CSS_SELECTOR,
+                        "div.fd365im1.to2l77zo.bbv8nyr4.mwp4sxku.gfz4du6o.ag5g9lrv",
+                    )
+                    input_box.send_keys(Keys.ESCAPE)
 
         except NoSuchElementException:
             pass
