@@ -12,6 +12,9 @@ import time
 import uuid
 import os
 
+from image_generate import openai_image_gen
+
+
 options = Options()
 options.add_argument("user-data-dir=./chrome_data")
 
@@ -31,9 +34,10 @@ def return_chat_gpt_response(text: str = None) -> str:
 
 
 def return_stable_diffusion_response(text: str = None) -> str:
+    response_image_data = openai_image_gen(text)
+       
     content = requests.get(
-        "https://upload.wikimedia.org/wikipedia/commons/e/e7/"
-        "Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg"
+        response_image_data
     ).content
     file_path = os.path.abspath(f"./data/{uuid.uuid4().__str__()}.jpeg")
     with open(file_path, "wb") as file:
