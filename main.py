@@ -87,12 +87,10 @@ while True:
 
                 elif "!chatgpt-image " in message:
 
-                    # TODO do some chatgpt + stablediff shit
-
                     message = message.split("!chatgpt-image ")[1]
 
-                    response = return_chat_gpt_response(message)
-                    image_path = return_stable_diffusion_response(message) #Changed to message since response in development
+                    response = return_chat_gpt_response(f"generate a promt for {message}")
+                    image_path = return_stable_diffusion_response(response) 
 
                     attachment_box = driver.find_element(
                         By.XPATH, '//div[@title = "Attach"]'
