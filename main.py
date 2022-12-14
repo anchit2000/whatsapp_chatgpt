@@ -5,7 +5,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 
 import requests
 import time
@@ -128,7 +128,7 @@ while True:
                     )
                     input_box.send_keys(Keys.ESCAPE)
 
-        except NoSuchElementException:
+        except (NoSuchElementException, StaleElementReferenceException):
             pass
 
-    time.sleep(10)
+    time.sleep(2)
