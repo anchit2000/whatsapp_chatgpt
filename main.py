@@ -5,7 +5,11 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    StaleElementReferenceException,
+    ElementClickInterceptedException,
+)
 
 import requests
 import time
@@ -37,12 +41,10 @@ def return_chat_gpt_response(text: str = None) -> str:
 
 def return_stable_diffusion_response(text: str = None) -> str:
     response_image_data = openai_image_gen(text)
-    print('[INFO]: Image Generated.')
-    content = requests.get(
-        response_image_data
-    ).content
-    if 'data' not in os.listdir(os.getcwd()):
-        os.mkdir(os.path.join(os.getcwd(), 'data'))
+    print("[INFO]: Image Generated.")
+    content = requests.get(response_image_data).content
+    if "data" not in os.listdir(os.getcwd()):
+        os.mkdir(os.path.join(os.getcwd(), "data"))
     file_path = os.path.abspath(f"./data/{uuid.uuid4().__str__()}.jpeg")
     with open(file_path, "wb") as file:
         file.write(content)
@@ -89,8 +91,10 @@ while True:
 
                     message = message.split("!chatgpt-image ")[1]
 
-                    response = return_chat_gpt_response(f"generate a promt for {message}")
-                    image_path = return_stable_diffusion_response(response) 
+                    response = return_chat_gpt_response(
+                        f"generate a promt for {message}"
+                    )
+                    image_path = return_stable_diffusion_response(response)
 
                     attachment_box = driver.find_element(
                         By.XPATH, '//div[@title = "Attach"]'
@@ -119,6 +123,17 @@ while True:
                     )
                     input_box.send_keys(Keys.ESCAPE)
 
+                elif (
+                    "Waiting for this message. Check your phone. Learn more" in message
+                ):
+
+                    input_box.send_keys(
+                        """I got Waiting for this message. Check your phone. Learn more. Sorry :(
+                        Please open this link to report https://api.whatsapp.com/send?phone=+917986485146&text=Chatbot%20not%20working"""
+                    )
+                    input_box.send_keys(Keys.ENTER)
+                    input_box.send_keys(Keys.ESCAPE)
+
                 else:
                     time.sleep(4)
 
@@ -128,7 +143,11 @@ while True:
                     )
                     input_box.send_keys(Keys.ESCAPE)
 
-        except (NoSuchElementException, StaleElementReferenceException):
+        except (
+            NoSuchElementException,
+            StaleElementReferenceException,
+            ElementClickInterceptedException,
+        ):
             pass
 
     time.sleep(2)
