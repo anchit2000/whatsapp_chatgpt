@@ -13,6 +13,7 @@ import uuid
 import os
 
 from image_generate import openai_image_gen
+from text_generate import openai_text_gen
 
 
 options = Options()
@@ -30,7 +31,8 @@ chats = driver.find_elements(By.CSS_SELECTOR, "div._3OvU8")
 
 
 def return_chat_gpt_response(text: str = None) -> str:
-    return "This feature is under development"
+    response_text_data = openai_text_gen(text)
+    return response_text_data
 
 
 def return_stable_diffusion_response(text: str = None) -> str:
